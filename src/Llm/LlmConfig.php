@@ -20,16 +20,16 @@ class LlmConfig
 
     public static function fromArray(array $config): self
     {
-        if (!isset($config['provider'])) {
-            throw new ConfigException('LLM provider is required');
+        if (!isset($config['provider']) || !is_string($config['provider'])) {
+            throw new ConfigException('LLM provider is required and must be a string');
         }
         
-        if (!isset($config['api_key'])) {
-            throw new ConfigException('LLM api_key is required');
+        if (!isset($config['api_key']) || !is_string($config['api_key']) || $config['api_key'] === '') {
+            throw new ConfigException('LLM api_key is required and must be a non-empty string');
         }
         
-        if (!isset($config['model'])) {
-            throw new ConfigException('LLM model is required');
+        if (!isset($config['model']) || !is_string($config['model'])) {
+            throw new ConfigException('LLM model is required and must be a string');
         }
 
         return new self(
@@ -37,7 +37,7 @@ class LlmConfig
             apiKey: $config['api_key'],
             model: $config['model'],
             baseUrl: $config['base_url'] ?? null,
-            timeout: $config['timeout'] ?? 30
+            timeout: (int)($config['timeout'] ?? 30)
         );
     }
 

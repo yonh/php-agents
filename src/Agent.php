@@ -12,6 +12,7 @@ use PhpAgent\Llm\LlmProviderFactory;
 use PhpAgent\Llm\Usage;
 use PhpAgent\Tool\Tool;
 use PhpAgent\Tool\ToolRegistry;
+use PhpAgent\Tool\Builtin\ChangeNotesTools;
 use PhpAgent\Session\Session;
 use PhpAgent\Session\SessionManager;
 use PhpAgent\Session\Storage\MemoryStorage;
@@ -49,6 +50,7 @@ class Agent
             ]
         );
         $this->toolRegistry = new ToolRegistry();
+        // ChangeNotesTools::register($this->toolRegistry);
         $this->sessionManager = new SessionManager(new MemoryStorage());
         $this->logger = $this->createDefaultLogger();
         $this->telemetry = new NullTelemetry();
@@ -66,8 +68,6 @@ class Agent
 
     public function chat(string|array $message, array $options = []): Response
     {
-        $normalizedMessage = $this->normalizeMessage($message);
-
         if ($this->currentSession === null) {
             $this->currentSession = $this->sessionManager->create();
         }
@@ -79,17 +79,19 @@ class Agent
             ]);
         }
 
-        $this->currentSession->addMessage([
-            'role' => 'user',
-            'content' => $normalizedMessage
-        ]);
+        // Check if $message is a list of messages
+        if (is_array($message) && isset($message[0]) && is_array($message[0]) && isset($message[0]['role'])) {
+            foreach ($message as $msg) {
+                $this->currentSession->addMessage($msg);
+            }
+        } else {
+            $this->currentSession->addMessage([
+                'role' => $options['role'] ?? 'user',
+                'content' => $message
+            ]);
+        }
 
-        $response = $this->executeReActLoop($this->currentSession->getMessages(), $options);
-
-        $this->currentSession->addMessage([
-            'role' => 'assistant',
-            'content' => $response->content
-        ]);
+        $response = $this->executeReActLoop($this->currentSession, $options);
 
         $this->sessionManager->save($this->currentSession);
 
@@ -103,6 +105,14 @@ class Agent
         callable $handler
     ): void {
         $tool = new Tool($name, $description, $parameters, $handler);
+        $this->toolRegistry->register($tool);
+    }
+
+    /**
+     * Register a pre-built Tool instance directly.
+     */
+    public function registerToolInstance(Tool $tool): void
+    {
         $this->toolRegistry->register($tool);
     }
 
@@ -160,7 +170,7 @@ class Agent
         return $message;
     }
 
-    private function executeReActLoop(array $messages, array $options): Response
+    private function executeReActLoop(Session $session, array $options): Response
     {
         $iteration = 0;
         $totalUsage = null;
@@ -173,7 +183,7 @@ class Agent
 
             try {
                 $llmResponse = $this->llmProvider->chat([
-                    'messages' => $messages,
+                    'messages' => $session->getMessages(),
                     'tools' => $this->toolRegistry->getOpenAiTools(),
                     'tool_choice' => $options['tool_choice'] ?? 'auto',
                     ...$options
@@ -196,11 +206,13 @@ class Agent
                 ? $llmResponse->usage
                 : $totalUsage->add($llmResponse->usage);
 
-            $messages[] = $llmResponse->message;
+            $session->addMessage($llmResponse->message);
 
             if (!empty($llmResponse->message['tool_calls'])) {
                 $toolResults = $this->handleToolCalls($llmResponse->message['tool_calls']);
-                $messages = array_merge($messages, $toolResults);
+                foreach ($toolResults as $result) {
+                    $session->addMessage($result);
+                }
                 continue;
             }
 

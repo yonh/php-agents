@@ -33,7 +33,7 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test-coverage": "phpunit --coverage-html coverage",
+        "test:coverage": "phpunit --coverage-html coverage",
         "phpstan": "phpstan analyse src --level=8",
         "cs-fix": "php-cs-fixer fix src",
         "cs-check": "php-cs-fixer fix src --dry-run --diff"
