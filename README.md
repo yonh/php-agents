@@ -1,8 +1,9 @@
 # PHP Agent Library
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.5-blue.svg)](https://www.php.net/)
 [![PSR-12](https://img.shields.io/badge/PSR--12-compliant-brightgreen.svg)](https://www.php-fig.org/psr/psr-12/)
+[![PHPUnit](https://github.com/yonh/php-agents/actions/workflows/phpunit.yml/badge.svg)](https://github.com/yonh/php-agents/actions/workflows/phpunit.yml)
+[![Coverage](https://codecov.io/gh/yonh/php-agents/branch/main/graph/badge.svg)](https://codecov.io/gh/yonh/php-agents)
 
 一个现代化的 PHP 8.5+ Agent 库，用于集成 LLM（大语言模型）能力，支持工具调用、多轮对话和 ReAct 推理循环。
 
