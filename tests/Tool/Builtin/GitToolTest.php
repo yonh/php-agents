@@ -2,14 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PhpAgent\Tests\Tool\Builtin;
+namespace PhpAgent\Tool\Builtin\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PhpAgent\Tool\ToolRegistry;
 use PhpAgent\Tool\Builtin\GitTool;
 
-#[CoversClass(GitTool::class)]
 class GitToolTest extends TestCase
 {
     public function testGitDiffReturnsRawStdoutWithStub(): void

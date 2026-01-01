@@ -1,0 +1,30 @@
+[
+    {
+        "hash": "58a30dd599f61f34c43475c6ed5969b6fa6e73b1",
+        "author": "laiyongheng",
+        "date": "2026-01-01T00:29:17+08:00",
+        "subject": "修复因requireCoverageMetadata=\"true\" 导致测试覆盖率总是0的问题",
+        "body": "变更清单：\n- phpunit.xml: 将 requireCoverageMetadata 从 true 改为 false\n- tests\/ResponseTest.php: 新增 Response 类属性测试用例\n\n回归测试建议：\n- 运行 phpunit 验证 ResponseTest 测试用例是否通过\n- 确认测试覆盖率配置变更不影响 CI\/CD 流程\n\n签名：自动化提交助手"
+    },
+    {
+        "hash": "7409cb3775f94897921d9467ed1f6b2ce73b3d22",
+        "author": "laiyongheng",
+        "date": "2025-12-31T23:56:03+08:00",
+        "subject": "添加 CI\/CD 支持和完善 Git 工具测试",
+        "body": "    变更清单：\n    - .github\/workflows\/phpunit.yml - 新增 PHPUnit 测试工作流配置\n    - README.md - 添加 PHPUnit 和 Codecov 徽章\n    - examples\/05-git-commit-note.php - 重命名示例文件以更好地反映功能\n    - tests\/Tool\/Builtin\/GitToolTest.php - 完善 GitTool 测试，增加状态和差异检查\n\n    回归测试建议：\n    - 运行完整的 PHPUnit 测试套件验证 CI\/CD 流水线正常工作\n    - 手动测试 git_diff 工具在不同仓库路径下的行为\n    - 验证 Codecov 覆盖率报告是否正确生成和上传\n\n    签名：自动化提交助手"
+    },
+    {
+        "hash": "5f7f382868b86f2600394b9fc48edd6622fd5a3a",
+        "author": "laiyongheng",
+        "date": "2025-12-31T23:25:26+08:00",
+        "subject": "新增 Git 工具与多消息支持，完善测试与配置",
+        "body": "变更清单：\n- src\/Agent.php：支持多消息格式输入，新增 registerToolInstance 方法，优化 ReAct 循环与消息管理\n- src\/Llm\/LlmConfig.php：增强配置验证，确保 provider\/api_key\/model 为合法字符串，api_key 非空，timeout 强制转为整数\n- src\/Tool\/Builtin\/GitTool.php：新增 Git 工具，提供 git_diff 功能，支持自定义仓库路径与命令执行器\n- examples\/05-change-notes-tools.php：新增示例，演示使用 Git 工具与模板生成提交说明\n- examples\/templates\/roles.php：新增角色与提交说明模板文件，保持示例文件精简\n- phpunit.xml：新增 PHPUnit 配置，设置测试套件、覆盖率与严格模式\n- tests\/AgentTest.php：新增 Agent 单元测试，覆盖多消息输入场景\n- tests\/Tool\/Builtin\/GitToolTest.php：新增 GitTool 单元测试，覆盖正常、覆盖路径、错误处理与参数验证\n- .env.example：移除 Redis 配置示例\n- .gitignore：添加 .phpunit.cache\/ 忽略项\n- composer.json：将 test-coverage 脚本重命名为 test:coverage\n\n回归测试建议：\n- 运行 phpunit 验证所有单元测试通过（含 AgentTest 与 GitToolTest）\n- 运行 phpunit --coverage-html coverage 检查覆盖率是否符合预期\n- 运行示例 examples\/05-change-notes-tools.php 验证 Git 工具调用与模板渲染正常\n- 使用 php-cs-fixer 检查代码风格，确保无新增规范问题"
+    },
+    {
+        "hash": "3fc1a038e3700e1133d5df3197cc22f837f85eba",
+        "author": "laiyongheng",
+        "date": "2025-12-31T20:38:52+08:00",
+        "subject": "feat: implement flexible logging system and reorganize documentation",
+        "body": "- Add LoggerFactoryInterface for customizable logging\n- Implement DefaultLoggerFactory with file-based logging\n- Update AgentConfig to support custom logger factories\n- Reorganize documentation:\n  - Consolidate README.md as main project documentation\n  - Move implementation status to docs\/implementation-status.md\n  - Create comprehensive development guide in docs\/development-guide.md\n  - Remove redundant documentation files\n- Support multiple LLM providers (OpenAI, ZAI, Anthropic, Azure, Ollama)\n- Implement complete tool system with parameter validation\n- Add session management with storage abstraction\n- Include comprehensive examples for all major features"
+    }
+]

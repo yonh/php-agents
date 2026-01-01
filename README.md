@@ -21,7 +21,7 @@
 ## 📦 安装
 
 ```bash
-composer require php-agent/agent
+composer require yonh/php-agents
 ```
 
 ## 🚀 快速开始

@@ -44,6 +44,9 @@ class Tool
     {
         try {
             return ($this->handler)($arguments);
+        } catch (\PhpAgent\Exception\ValidationException $e) {
+            // 直接透传参数校验异常，便于调用方捕获
+            throw $e;
         } catch (\Exception $e) {
             throw new ToolExecutionException(
                 "Tool '{$this->name}' execution failed: " . $e->getMessage(),
